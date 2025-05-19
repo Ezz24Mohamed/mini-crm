@@ -47,4 +47,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Customer::class, 'assigned_to');
     }
+    public function actions(){
+        return $this->hasMany(Action::class,'employee_id');
+    }
+    
 }

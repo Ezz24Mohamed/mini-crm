@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Admin\EmployeeController;
 use App\Http\Controllers\Api\Admin\CustomerController;
+use App\Http\Controllers\Api\ActionController;
 
 
 
@@ -36,5 +37,12 @@ Route::controller(EmployeeController::class)->group(function(){
 Route::controller(CustomerController::class)->group(function (){
     Route::prefix('customer')->group(function(){
         Route::post('/add-customer','addCustomer')->name('customer.add-customer')->middleware(['auth:sanctum']);
+    });
+});
+Route::controller(ActionController::class)->middleware(['auth:sanctum','role:employee'])->group(function (){
+    Route::prefix('action')->group(function(){
+        Route::post('/add-action','addAction')->name('action.add-action');
+        Route::get('/get-actions','getActions')->name('action.get-actions');
+        Route::put('/update-action/{id}','updateAction')->name('action.update-action');
     });
 });

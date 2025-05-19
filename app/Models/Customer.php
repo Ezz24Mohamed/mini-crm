@@ -18,4 +18,7 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
+    public function actions(){
+        return $this->hasMany(Action::class,'customer_id');
+    }
 }

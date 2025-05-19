@@ -14,12 +14,14 @@ class CustomerController extends Controller
     public function addCustomer(CustomerRequestForm $request)
     {
         $validate = $request->validated();
-        $user=Auth::user();
-        if(!isset($validate['assigned_to'])&&$user->role==='employee'){
-            $validate['assigned_to']=$user->id;
+        $user = Auth::user();
+        if (!isset($validate['assigned_to']) && $user->role === 'employee') {
+            $validate['assigned_to'] = $user->id;
         }
-        if($user->role==='employee'&&isset($validate['assigned_to'])){
-            return ApiResponse::sendResponse('You are net allowed to assign customer to another employee');
+        if  ( $user->role === 'employee' &&
+        isset($validate['assigned_to']) &&
+        $validate['assigned_to'] != $user->id ){
+            return ApiResponse::sendResponse(null, 'You are not allowed to assign customer to another employee', 403);
         }
         $customer = Customer::create([
             'name' => $validate['name'],
