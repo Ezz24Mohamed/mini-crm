@@ -23,7 +23,7 @@ class ActionController extends Controller
         }
         $action = Action::create([
             'customer_id' => $validated['customer_id'],
-            'employee_id' => $validated['employee_id'],
+            'employee_id' => $user->id,
             'action_type' => $validated['action_type'],
             'result' => $validated['result'] ?? null,
 
@@ -34,7 +34,7 @@ class ActionController extends Controller
     {
         $user = Auth::user();
         $actions = Action::with(['customer'])->where('employee_id', $user->id)->latest()->paginate(10);
-        if (!$actions) {
+        if ($actions->isEmpty()) {
             return ApiResponse::sendResponse(null, 'No actions found', 404);
         }
         return ApiResponse::sendResponse(
@@ -62,7 +62,7 @@ class ActionController extends Controller
         ]);
         $action->update([
             'action_type' => $request->action_type?? $action->action_type,
-            'result' => $request->result,
+            'result' => $request->result ?? $action->result,
         ]);
         
         return ApiResponse::sendResponse(new ActionResource($action), 'Action updated successfully', 200);
